@@ -9,7 +9,7 @@ services:
       - ./db:/var/lib/postgresql/data
     container_name: postgres
     healthcheck:
-      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER:-yapo} -d ${POSTGRES_DB:-YAPO}'" ]
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER:-theuserisverywise} -d ${POSTGRES_DB:-main_database}'" ]
       interval: 5s
       timeout: 3s
       retries: 6
