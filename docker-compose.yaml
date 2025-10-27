@@ -8,10 +8,17 @@ services:
     volumes:
       - ./db:/var/lib/postgresql/data
     container_name: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER:-yapo} -d ${POSTGRES_DB:-YAPO}'" ]
+      interval: 5s
+      timeout: 3s
+      retries: 6
 
   redis:
     image: "redis:alpine"
     container_name: redis
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
 
   django:
     restart: unless-stopped
@@ -23,8 +30,10 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - redis
-      - db
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
     env_file:
       - ./env/django.env
       - ./env/db.env
